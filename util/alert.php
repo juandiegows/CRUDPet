@@ -14,4 +14,3 @@ function showUpdateAlert($message) {
             }, 5000); // Eliminar el div después de 5 segundos
           </script>';
 }
-?>

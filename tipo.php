@@ -4,15 +4,15 @@ include('database/connection.php');
 include('util/alert.php');
 
 
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//     // recorrer lo que trae el post
-//     foreach ($_POST as $key => $value) {
-//         echo $key . ': ' . $value . '<br>';
-//     }
-// // pintarlo como json
-//     $json = json_encode($_POST);
-//     echo $json;
-// }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // recorrer lo que trae el post
+    foreach ($_POST as $key => $value) {
+        echo $key . ': ' . $value . '<br>';
+    }
+    // pintarlo como json
+    $json = json_encode($_POST);
+    echo $json;
+}
 
 // insertar datos
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

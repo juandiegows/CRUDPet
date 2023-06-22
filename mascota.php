@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $peso = trim($_POST['peso'] ?? '');
         $foto = $_FILES['foto']['tmp_name'];
         $nombreArchivo = $_FILES['foto']['name'];
-
+        echo $nombreArchivo;
         $directorioDestino = 'uploads/';
 
         // Verificar si el directorio no existe y crearlo
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Verificar si el directorio no existe y crearlo
         if (!is_dir($directorioDestino)) {
-            if (!mkdir($directorioDestino, 0777, true) && !is_dir($directorioDestino)) {
+            if (!mkdir($directorioDestino, 0777, true)) {
                 echo 'No se pudo crear el directorio de destino.';
                 exit;
             }
@@ -181,10 +181,12 @@ if (isset($_GET['id'])) {
         echo 'No se encontró ningún registro de mascota con el ID proporcionado.';
     }
 
-    // Liberar los resultados y cerrar la conexión a la base de datos
+    // Liberar los resultados 
     mysqli_free_result($result);
 }
 
+$queryTipo = "SELECT id, nombre FROM tipo";
+$resultTipo = mysqli_query($conn, $queryTipo);
 
 ?>
 <!DOCTYPE html>
@@ -202,8 +204,23 @@ if (isset($_GET['id'])) {
         <input type="hidden" name="action" value="<?php echo isset($_GET['id']) ? 'actualizar' : 'agregar'; ?>">
         <label for="nombre">Nombre:</label>
         <input type="text" name="nombre" value="<?php echo isset($_GET['id']) ? $nombre : ''; ?>"><br><br>
-        <label for="tipo_id">Tipo ID:</label>
-        <input type="text" name="tipo_id"><br><br>
+
+        <label for="tipo_id">Tipo:</label>
+        <select name="tipo_id" style="width: 200px;">
+            <option value="0" selected hidden>Seleccione</option>
+            <?php
+            // Iterar sobre los registros obtenidos de la tabla tipo
+            while ($rowTipo = mysqli_fetch_assoc($resultTipo)) {
+                $tipoId = $rowTipo['id'];
+                $tipoNombre = $rowTipo['nombre'];
+                // Generar las opciones del select
+                echo "<option value='$tipoId'>$tipoNombre</option>";
+            }
+
+            ?>
+        </select>
+
+        <br>
         <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
         <input type="date" name="fecha_nacimiento"><br><br>
         <label for="peso">Peso:</label>
@@ -251,9 +268,30 @@ if (mysqli_num_rows($result) > 0) {
                 <input type='hidden' name='action' value='eliminar'>
                 <input type='submit' value='Eliminar'>
               </form>";
-
-        echo "<br><br>";
     }
+
+    // echo "<br><br>";
+    // echo '<table>';
+    // echo '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Fecha de Nacimiento</th><th>Peso</th><th>Foto</th><th>Acciones</th></tr>';
+
+    // while ($row = mysqli_fetch_assoc($result)) {
+    //     echo '<tr>';
+    //     echo '<td>' . $row['id'] . '</td>';
+    //     echo '<td>' . $row['nombre'] . '</td>';
+    //     echo '<td>' . $row['tipo'] . '</td>';
+    //     echo '<td>' . $row['fecha_nacimiento'] . '</td>';
+    //     echo '<td>' . $row['peso'] . '</td>';
+    //     echo '<td><img src="' . $row['foto_url'] . '" alt="Foto" width="100"></td>';
+    //     echo "<td><a href='mascota.php?id=$id'>Editar</a> </td>
+    //      <form action='mascota.php' method='post' style='display:inline-block;'>
+    //     <input type='hidden' name='id' value='$id'>
+    //     <input type='hidden' name='action' value='eliminar'>
+    //     <input type='submit' value='Eliminar'>
+    //   </form>";
+    //     echo '</tr>';
+    // }
+
+    // echo '</table>';
 } else {
     echo "No se encontraron mascotas en la base de datos.";
 }
